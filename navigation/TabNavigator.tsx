@@ -1,11 +1,11 @@
 // navigation/TabNavigator.tsx
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import PokedexStack from './PokedexStack';
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import PokedexStack from "./PokedexStack";
 
-import HomeScreen from '../screens/HomeScreen';
-import PokedexScreen from '../screens/PokedexScreen';
+import HomeScreen from "../screens/HomeScreen";
+import PokedexScreen from "../screens/PokedexScreen";
 // import MyTeamScreen from '../screens/MyTeamScreen';
 // import QuizScreen from '../screens/QuizScreen';
 // import AboutScreen from '../screens/AboutScreen';

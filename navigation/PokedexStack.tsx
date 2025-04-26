@@ -4,6 +4,7 @@ import PokedexScreen from "../screens/PokedexScreen";
 import PokemonDetailsScreen from "../screens/PokemonDetailsScreen";
 
 export type PokedexStackParamList = {
+  Home: undefined; // 👈 add
   Pokedex: undefined;
   PokemonDetails: { name: string };
 };

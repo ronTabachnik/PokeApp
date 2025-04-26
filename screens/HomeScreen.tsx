@@ -10,6 +10,13 @@ import {
 } from "react-native";
 import { TextInput, Keyboard } from "react-native";
 import { getPokemonById, getPokemonByName } from "../api/pokeapi";
+import { PokemonCard } from "../components/PokemonCard";
+import { TYPE_COLORS } from "../utils/Colors";
+import { TypeBadge } from "../components/TypeBadge";
+import { getLongestNameLength } from "../utils/textHelpers";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { PokedexStackParamList } from "../navigation/PokedexStack";
 
 type PokemonType = {
   name: string;
@@ -20,6 +27,8 @@ type PokemonType = {
 };
 
 export default function HomeScreen(): JSX.Element {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<PokedexStackParamList>>();
   const [pokemon, setPokemon] = useState<PokemonType | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [searchText, setSearchText] = useState<string>("");
@@ -39,6 +48,10 @@ export default function HomeScreen(): JSX.Element {
       setLoading(false);
     }
   };
+
+  const TYPE_BADGE_WIDTH = pokemon
+    ? getLongestNameLength(pokemon.types, ["type", "name"]) * 8 + 24
+    : 0;
 
   const getRandomPokemon = async () => {
     try {
@@ -67,16 +80,24 @@ export default function HomeScreen(): JSX.Element {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.name}>{pokemon.name.toUpperCase()}</Text>
-      <Image
-        source={{ uri: pokemon.sprites.front_default }}
-        style={styles.image}
+      <PokemonCard
+        name={pokemon.name}
+        image={pokemon.sprites.front_default}
+        backgroundColor={TYPE_COLORS[pokemon.types[0].type.name] || "#3b4cca"}
+        onPress={() =>
+          navigation.navigate("PokemonDetails", { name: pokemon.name })
+        }
       />
-      <View style={styles.types}>
-        {pokemon.types.map((typeObj) => (
-          <View key={typeObj.type.name} style={styles.typeBadge}>
-            <Text style={styles.typeText}>{typeObj.type.name}</Text>
-          </View>
+
+      <View style={styles.row}>
+        {pokemon.types.map((typeObj: any) => (
+          <TypeBadge
+            key={typeObj.type.name}
+            name={typeObj.type.name}
+            width={TYPE_BADGE_WIDTH}
+            backgroundColor={TYPE_COLORS[pokemon.types[0].type.name]}
+            textColor="white"
+          />
         ))}
       </View>
 
@@ -92,7 +113,6 @@ export default function HomeScreen(): JSX.Element {
           onChangeText={setSearchText}
           autoCapitalize="none"
         />
-
         <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
           <Text style={styles.searchButtonText}>🔍 Search</Text>
         </TouchableOpacity>
@@ -168,5 +188,11 @@ const styles = StyleSheet.create({
   suggestionText: {
     fontSize: 16,
     textTransform: "capitalize"
+  },
+  row: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+    marginVertical: 16
   }
 });

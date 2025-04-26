@@ -11,27 +11,9 @@ import {
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { PokedexStackParamList } from "../navigation/PokedexStack";
 import { getPokemonByName, getPokemonSpecies } from "../api/pokeapi";
-
-const TYPE_COLORS: Record<string, string> = {
-  normal: "#A8A77A",
-  fire: "#EE8130",
-  water: "#6390F0",
-  electric: "#F7D02C",
-  grass: "#7AC74C",
-  ice: "#96D9D6",
-  fighting: "#C22E28",
-  poison: "#A33EA1",
-  ground: "#E2BF65",
-  flying: "#A98FF3",
-  psychic: "#F95587",
-  bug: "#A6B91A",
-  rock: "#B6A136",
-  ghost: "#735797",
-  dragon: "#6F35FC",
-  dark: "#705746",
-  steel: "#B7B7CE",
-  fairy: "#D685AD"
-};
+import { TypeBadge } from "../components/TypeBadge";
+import { TYPE_COLORS, hexToRGBA } from "../utils/Colors";
+import { getLongestNameLength } from "../utils/textHelpers";
 
 type ScreenRouteProp = RouteProp<PokedexStackParamList, "PokemonDetails">;
 
@@ -66,14 +48,13 @@ export default function PokemonDetailsScreen(): JSX.Element {
     load();
   }, [name]);
 
-  const getLongestStatNameLength = () => {
-    if (!pokemon) return 0;
-    return pokemon.stats.reduce((max: number, statObj: any) => {
-      return Math.max(max, statObj.stat.name.length);
-    }, 0);
-  };
+  const TYPE_BADGE_WIDTH = pokemon
+    ? getLongestNameLength(pokemon.types, ["type", "name"]) * 8 + 24
+    : 0;
 
-  const BADGE_WIDTH = getLongestStatNameLength() * 8 + 24; // calculate dynamically
+  const BADGE_WIDTH = pokemon
+    ? getLongestNameLength(pokemon.stats, ["stat", "name"]) * 8 + 24
+    : 0;
 
   if (loading || !pokemon) {
     return (
@@ -100,14 +81,21 @@ export default function PokemonDetailsScreen(): JSX.Element {
       <Text style={styles.title}>Types:</Text>
       <View style={styles.row}>
         {pokemon.types.map((typeObj: any) => (
-          <Text key={typeObj.type.name} style={styles.typeBadge}>
-            {typeObj.type.name}
-          </Text>
+          <TypeBadge
+            key={typeObj.type.name}
+            name={typeObj.type.name}
+            width={TYPE_BADGE_WIDTH}
+          />
         ))}
       </View>
 
       <Text style={styles.title}>Stats:</Text>
-      <View style={styles.statsContainer}>
+      <View
+        style={[
+          styles.statsContainer,
+          { backgroundColor: hexToRGBA(backgroundColor, 0.5) }
+        ]}
+      >
         {pokemon.stats.map((statObj: any) => (
           <View key={statObj.stat.name} style={styles.statRow}>
             <View style={[styles.badge, { width: BADGE_WIDTH }]}>
@@ -124,7 +112,10 @@ export default function PokemonDetailsScreen(): JSX.Element {
               <View
                 style={[
                   styles.progressFill,
-                  { width: `${(statObj.base_stat / 255) * 100}%` }
+                  {
+                    width: `${(statObj.base_stat / 255) * 100}%`,
+                    backgroundColor: backgroundColor // 👈 dynamic!
+                  }
                 ]}
               />
             </View>
@@ -178,6 +169,21 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 10
   },
+  typeBadge: {
+    backgroundColor: "#fff",
+    paddingVertical: 8,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    marginHorizontal: 5,
+    marginBottom: 8
+  },
+  typeBadgeText: {
+    textTransform: "capitalize",
+    fontWeight: "bold",
+    fontSize: 14,
+    color: "#333"
+  },
   title: {
     fontSize: 20,
     marginTop: 16,
@@ -190,13 +196,6 @@ const styles = StyleSheet.create({
     gap: 8,
     marginVertical: 16
   },
-  typeBadge: {
-    backgroundColor: "#eee",
-    padding: 8,
-    marginHorizontal: 5,
-    borderRadius: 10,
-    textTransform: "capitalize"
-  },
   description: {
     fontSize: 16,
     marginTop: 10,
@@ -205,7 +204,6 @@ const styles = StyleSheet.create({
     color: "#555"
   },
   statsContainer: {
-    backgroundColor: "#bbbb",
     borderRadius: 12,
     width: "100%",
     padding: 12,

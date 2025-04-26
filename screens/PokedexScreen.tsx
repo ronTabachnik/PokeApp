@@ -12,27 +12,8 @@ import { getPokemonList, getPokemonByName } from "../api/pokeapi";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { PokedexStackParamList } from "../navigation/PokedexStack";
-
-const TYPE_COLORS: Record<string, string> = {
-  normal: "#A8A77A",
-  fire: "#EE8130",
-  water: "#6390F0",
-  electric: "#F7D02C",
-  grass: "#7AC74C",
-  ice: "#96D9D6",
-  fighting: "#C22E28",
-  poison: "#A33EA1",
-  ground: "#E2BF65",
-  flying: "#A98FF3",
-  psychic: "#F95587",
-  bug: "#A6B91A",
-  rock: "#B6A136",
-  ghost: "#735797",
-  dragon: "#6F35FC",
-  dark: "#705746",
-  steel: "#B7B7CE",
-  fairy: "#D685AD"
-};
+import { TYPE_COLORS } from "../utils/Colors";
+import { PokemonCard } from "../components/PokemonCard";
 
 type PokemonPreview = {
   name: string;
@@ -83,13 +64,12 @@ export default function PokedexScreen(): JSX.Element {
   }, []);
 
   const renderItem = ({ item }: { item: PokemonPreview }) => (
-    <TouchableOpacity
-      style={[styles.card, { backgroundColor: item.background }]}
+    <PokemonCard
+      name={item.name}
+      image={item.image}
+      backgroundColor={item.background}
       onPress={() => navigation.navigate("PokemonDetails", { name: item.name })}
-    >
-      <Image source={{ uri: item.image }} style={styles.image} />
-      <Text style={styles.name}>{item.name.toUpperCase()}</Text>
-    </TouchableOpacity>
+    />
   );
 
   return (
