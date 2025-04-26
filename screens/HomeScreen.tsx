@@ -17,6 +17,7 @@ import { getLongestNameLength } from "../utils/textHelpers";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { PokedexStackParamList } from "../navigation/PokedexStack";
+import { ScrollView } from "react-native";
 
 type PokemonType = {
   name: string;
@@ -79,7 +80,7 @@ export default function HomeScreen(): JSX.Element {
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <PokemonCard
         name={pokemon.name}
         image={pokemon.sprites.front_default}
@@ -117,7 +118,7 @@ export default function HomeScreen(): JSX.Element {
           <Text style={styles.searchButtonText}>🔍 Search</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 

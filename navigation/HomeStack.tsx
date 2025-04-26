@@ -1,28 +1,30 @@
+// navigation/HomeStack.tsx
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import PokedexScreen from "../screens/PokedexScreen";
+import HomeScreen from "../screens/HomeScreen";
 import PokemonDetailsScreen from "../screens/PokemonDetailsScreen";
 
-export type PokedexStackParamList = {
-  Pokedex: undefined;
+export type HomeStackParamList = {
+  Home: undefined;
   PokemonDetails: { name: string };
 };
 
-const Stack = createNativeStackNavigator<PokedexStackParamList>();
+const Stack = createNativeStackNavigator<HomeStackParamList>();
 
-export default function PokedexStack() {
+export default function HomeStack() {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="Pokedex"
-        component={PokedexScreen}
-        options={{ title: "Pokédex" }}
+        name="Home"
+        component={HomeScreen}
+        options={{ title: "Home" }}
       />
       <Stack.Screen
         name="PokemonDetails"
         component={PokemonDetailsScreen}
         options={{ title: "Details" }}
       />
+      {/* Later: <Stack.Screen name="Future" component={FutureScreen} /> */}
     </Stack.Navigator>
   );
 }
